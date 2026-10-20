@@ -49,12 +49,11 @@ function renderOrders(data) {
       ? order.items.map(item => `<div class="product-row">
           <div class="product-main">
             <div class="sku-line">
-              <span class="sku-label">SKU</span>
               <span class="product-sku">${item.sku ? escapeHtml(item.sku) : "Chưa có SKU"}</span>
+              <span class="qty">× ${Number(item.quantity) || 0}</span>
             </div>
             <div class="product-name">${escapeHtml(item.name)}${item.variant ? ` · ${escapeHtml(item.variant)}` : ""}</div>
           </div>
-          <div class="qty-block"><span class="qty-label">SL</span><span class="qty">× ${Number(item.quantity) || 0}</span></div>
         </div>`).join("")
       : `<div class="empty-products">API chưa trả về chi tiết sản phẩm cho đơn này.</div>`;
     return `<article class="order-card">
@@ -63,7 +62,7 @@ function renderOrders(data) {
         <div class="order-date">${escapeHtml(fmtDate(order.createdAt))}</div></div>
         <span class="carrier ${carrierUnknown ? "unknown" : ""}">${escapeHtml(order.carrier || "Chưa xác định")}</span>
       </div>
-      ${order.trackingCode ? `<div class="product-sku" style="margin-top:8px">Mã vận đơn: ${escapeHtml(order.trackingCode)}</div>` : ""}
+      ${order.trackingCode ? `<div class="tracking-code">Mã vận đơn: ${escapeHtml(order.trackingCode)}</div>` : ""}
       <div class="section-label">SẢN PHẨM · SỐ LƯỢNG</div>
       ${items}
     </article>`;
