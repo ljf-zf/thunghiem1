@@ -47,9 +47,14 @@ function renderOrders(data) {
     const carrierUnknown = !order.carrier || order.carrier === "Chưa xác định";
     const items = order.items && order.items.length
       ? order.items.map(item => `<div class="product-row">
-          <div><div class="product-name">${escapeHtml(item.name)}${item.variant ? ` · ${escapeHtml(item.variant)}` : ""}</div>
-          ${item.sku ? `<div class="product-sku">SKU: ${escapeHtml(item.sku)}</div>` : ""}
-          </div><div class="qty">× ${Number(item.quantity) || 0}</div>
+          <div class="product-main">
+            <div class="sku-line">
+              <span class="sku-label">SKU</span>
+              <span class="product-sku">${item.sku ? escapeHtml(item.sku) : "Chưa có SKU"}</span>
+            </div>
+            <div class="product-name">${escapeHtml(item.name)}${item.variant ? ` · ${escapeHtml(item.variant)}` : ""}</div>
+          </div>
+          <div class="qty-block"><span class="qty-label">SL</span><span class="qty">× ${Number(item.quantity) || 0}</span></div>
         </div>`).join("")
       : `<div class="empty-products">API chưa trả về chi tiết sản phẩm cho đơn này.</div>`;
     return `<article class="order-card">
