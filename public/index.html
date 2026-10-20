@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#14532d">
-  <meta name="description" content="Tra cứu đơn hàng Sapo bằng mã đơn">
+  <meta name="description" content="Tra cứu đơn hàng Sapo bằng mã đơn, mã vận đơn hoặc địa chỉ nhận hàng">
   <title>Tra đơn nhanh · Sapo</title>
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="stylesheet" href="/styles.css">
@@ -15,24 +15,24 @@
       <div class="brand-icon" aria-hidden="true">↗</div>
       <div class="brand-copy">
         <h1>Tra đơn nhanh</h1>
-        <p>Sapo - Hỏa Tốc</p>
+        <p>Sapo · Đơn hỏa tốc</p>
       </div>
     </header>
 
     <section id="search-panel" class="hidden">
       <section class="search-card">
         <div class="eyebrow">TÌM ĐƠN HÀNG</div>
-        <h2>Nhập mã đơn hoặc mã vận đơn</h2>
-        <p class="muted"></p>
+        <h2>Nhập mã đơn, mã vận đơn hoặc địa chỉ nhận</h2>
+        <p class="muted">Có thể tìm bằng mã đơn, mã vận đơn hoặc một phần địa chỉ nhận hàng. Đơn mới nhất hiện trước.</p>
         <form id="search-form" class="search-form">
           <div class="input-wrap">
             <span aria-hidden="true">⌕</span>
-            <input id="last4" type="search" inputmode="text" maxlength="100" placeholder="Mã đơn..." autocomplete="off" aria-label="Mã đơn hoặc mã vận đơn" required>
+            <input id="last4" type="search" inputmode="text" maxlength="100" placeholder="Mã đơn, mã vận đơn hoặc địa chỉ nhận..." autocomplete="off" aria-label="Mã đơn, mã vận đơn hoặc địa chỉ nhận hàng" required>
             <button id="clear" type="button" class="clear-button" aria-label="Xóa">×</button>
           </div>
           <button id="search-button" class="primary search-button" type="submit">Tra cứu</button>
         </form>
-        <div class="quick-hint"><span class="hint-dot"></span> </div>
+        <div class="quick-hint"><span class="hint-dot"></span> Tự tìm khi gõ từ 2 ký tự trở lên · Không phân biệt dấu tiếng Việt</div>
       </section>
 
       <section id="results-section" class="results-section hidden" aria-live="polite">
@@ -49,7 +49,7 @@
     </section>
 
     <div id="status" class="status" role="status"></div>
-    <footer>.</footer>
+    <footer>Thông tin chỉ dành cho nhân viên được cấp quyền.</footer>
   </main>
   <script src="/app.js" defer></script>
 </body>

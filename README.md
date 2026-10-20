@@ -61,3 +61,8 @@ Không đưa thông tin này vào frontend hoặc ảnh chụp màn hình. Nếu
 ## Lưu ý về truy cập nội bộ
 
 Phiên bản này đã bỏ màn hình đăng nhập. Nếu triển khai dưới dạng Render Web Service thông thường, đường dẫn có thể truy cập công khai; chỉ chia sẻ cho nhân viên và không đăng token Sapo vào mã nguồn/GitHub. Token Sapo vẫn chỉ được đọc ở máy chủ qua biến môi trường. Nếu cần giới hạn thật sự theo nhân viên, hãy dùng VPN hoặc lớp kiểm soát truy cập ở phía máy chủ.
+
+
+## Tìm đơn theo địa chỉ nhận hàng
+
+Bản nâng cấp cho phép tra cứu bằng mã đơn, mã vận đơn hoặc một phần địa chỉ nhận hàng. Tìm địa chỉ không phân biệt dấu tiếng Việt và hiển thị địa chỉ trên thẻ kết quả nếu API Sapo trả về trường địa chỉ. Số đơn có thể tìm được phụ thuộc số trang tải được (cấu hình `MAX_PAGES`) và các trường địa chỉ mà API Sapo cung cấp.

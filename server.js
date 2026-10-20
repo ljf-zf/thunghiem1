@@ -49,6 +49,51 @@ function orderCodeCandidates(o) {
     o.order_number, o.orderNumber, o.name, o.tracking_code
   ].filter(v => v !== undefined && v !== null && String(v).trim() !== "").map(String);
 }
+function normalizeSearchText(value) {
+  return String(value ?? "")
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d").replace(/Đ/g, "D")
+    .toLocaleLowerCase("vi-VN").replace(/\s+/g, " ").trim();
+}
+function getRecipientAddress(o) {
+  const candidates = [
+    o.shipping_address, o.shippingAddress, o.receiver_address, o.receiverAddress,
+    o.delivery_address, o.deliveryAddress, o.address_shipping, o.shipping_address_text,
+    o.customer_address, o.customerAddress, o.address,
+    o.shipping && (o.shipping.address || o.shipping.shipping_address || o.shipping.receiver_address),
+    o.shipping_info && (o.shipping_info.address || o.shipping_info.full_address || o.shipping_info.receiver_address),
+    o.shipping_package && (o.shipping_package.address || o.shipping_package.shipping_address),
+    o.receiver && (o.receiver.address || o.receiver.full_address),
+    // Sapo Market Place response example: customer.address + district + city.
+    // Combine these fields so searching the visible suffix after a masked street
+    // prefix still works even when the API stores district/city separately.
+    o.customer && [
+      o.customer.shipping_address,
+      o.customer.address,
+      o.customer.ward,
+      o.customer.district,
+      o.customer.city,
+      o.customer.country
+    ].filter(v => typeof v === "string" && v.trim()).join(", ")
+  ];
+  function flattenAddress(value) {
+    if (typeof value === "string") return value.trim();
+    if (!value || typeof value !== "object") return "";
+    const parts = [
+      value.full_address, value.fullAddress, value.address,
+      value.address1, value.address2, value.street, value.street_address,
+      value.ward_name, value.ward, value.district_name, value.district,
+      value.city_name, value.province_name, value.province, value.city,
+      value.receiver_address, value.receiverAddress
+    ].filter(v => typeof v === "string" && v.trim());
+    return [...new Set(parts.map(v => v.trim()))].join(", ");
+  }
+  for (const candidate of candidates) {
+    const address = flattenAddress(candidate);
+    if (address) return address;
+  }
+  return "";
+}
 function getOrderDate(o) {
   const raw = o.created_at || o.createdAt || o.order_created_at || o.updated_at || o.updatedAt || "";
   const t = Date.parse(raw);
@@ -110,6 +155,7 @@ function mapOrder(o) {
     id: String(o.id || o.order_id || fullCode),
     code: fullCode,
     trackingCode: String(o.tracking_code || o.tracking_number || ""),
+    address: getRecipientAddress(o),
     createdAt: o.created_at || o.createdAt || o.order_created_at || "",
     createdTs: getOrderDate(o),
     carrier: getCarrier(o),
@@ -148,7 +194,7 @@ async function fetchOrdersPage(config, page) {
 }
 app.get("/api/search", async (req, res) => {
   const query = String(req.query.q || req.query.last4 || "").normalize("NFC").trim().toLocaleLowerCase("vi-VN");
-  if (query.length < 2) return res.status(400).json({ error: "Nhập ít nhất 2 ký tự của mã đơn hoặc mã vận đơn." });
+  if (query.length < 2) return res.status(400).json({ error: "Nhập ít nhất 2 ký tự của mã đơn, mã vận đơn hoặc địa chỉ nhận hàng." });
   if (query.length > 100) return res.status(400).json({ error: "Từ khóa quá dài." });
   const cacheKey = query;
   const cached = cache.get(cacheKey);
@@ -164,9 +210,10 @@ app.get("/api/search", async (req, res) => {
       all.push(...result.orders);
       if (all.length >= first.total && first.total > 0) break;
     }
+    const normalizedQuery = normalizeSearchText(query);
     const matches = all.map(mapOrder).filter(o => {
-      const candidates = [o.code, o.trackingCode].filter(Boolean);
-      return candidates.some(code => String(code).normalize("NFC").toLocaleLowerCase("vi-VN").includes(query));
+      const candidates = [o.code, o.trackingCode, o.address].filter(Boolean);
+      return candidates.some(value => normalizeSearchText(value).includes(normalizedQuery));
     }).sort((a, b) => b.createdTs - a.createdTs);
     const data = {
       query,

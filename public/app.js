@@ -40,7 +40,7 @@ function renderOrders(data) {
   $("partial-warning").classList.toggle("hidden", !data.partial);
   const results = $("results");
   if (!data.orders.length) {
-    results.innerHTML = `<div class="empty-state"><div class="empty-icon">⌕</div><strong>Chưa tìm thấy đơn phù hợp</strong><br>Kiểm tra lại 4 số cuối hoặc thử sau khi danh sách đơn trên Sapo được cập nhật.</div>`;
+    results.innerHTML = `<div class="empty-state"><div class="empty-icon">⌕</div><strong>Chưa tìm thấy đơn phù hợp</strong><br>Thử mã đơn, mã vận đơn hoặc một phần địa chỉ nhận hàng khác.</div>`;
     return;
   }
   results.innerHTML = data.orders.map(order => {
@@ -63,6 +63,7 @@ function renderOrders(data) {
         <span class="carrier ${carrierUnknown ? "unknown" : ""}">${escapeHtml(order.carrier || "Chưa xác định")}</span>
       </div>
       ${order.trackingCode ? `<div class="tracking-code">Mã vận đơn: ${escapeHtml(order.trackingCode)}</div>` : ""}
+      ${order.address ? `<div class="tracking-code order-address">Địa chỉ nhận: ${escapeHtml(order.address)}</div>` : ""}
       <div class="section-label">SẢN PHẨM · SỐ LƯỢNG</div>
       ${items}
     </article>`;
